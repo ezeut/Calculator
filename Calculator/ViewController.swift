@@ -31,14 +31,32 @@ class ViewController: UIViewController {
     }
     
     
-    @IBAction func performOperation(_ sender: UIButton) {
-        isTyping = false
-        if let mathmaticalSymbol = sender.currentTitle {
-            if mathmaticalSymbol == "π" {
-                display.text = String(Double.pi)
-            }
+    // computed property: 모든 property가 저장만 되는 것이 아니라 연산도 가능
+    
+    private var displayValue: Double {  // computed property
+        get {
+            return Double(display.text!)!
+            // 값이 변환이 안 될 수도 있으므로 ! 사용하여 강제추출
+        }
+        set {
+            display.text = String(newValue)
         }
     }
     
+    // Model이 연산하도록 controller와 model을 연결하는 과정
+    
+    // 새 클래스의 객체를 생성할 때마다 인자가 없는 initializer가 하나 자동으로 생성됨, 기본 initializer 같은 것
+    private var brain = CalculatorBrain()
+    
+    @IBAction func performOperation(_ sender: UIButton) {
+        if isTyping {
+            brain.setOperand(operand: displayValue)
+            isTyping = false
+        }
+        if let mathmaticalSymbol = sender.currentTitle {
+            brain.performOperation(symbol: mathmaticalSymbol)
+        }
+        
+        displayValue = brain.result
+    }
 }
-
