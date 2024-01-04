@@ -22,9 +22,12 @@ import Foundation
 class CalculatorBrain {
     
     private var accumulator = 0.0
+    private var internalProgram = [Any]()
+    
     
     func setOperand(operand: Double) {
         accumulator = operand
+        internalProgram.append(operand)
     }
     
     private var operations: Dictionary<String, Operation> = [
@@ -61,6 +64,7 @@ class CalculatorBrain {
     //    }
     
     func performOperation(symbol: String) {
+        internalProgram.append(symbol)
         if let operation = operations[symbol] {
             // switch구문은 Swift에서 강력함, 연관값을 가져오기 위해 패턴 매칭을 할 수 있다
             switch operation {
@@ -102,6 +106,33 @@ class CalculatorBrain {
         var binaryFunction: (Double, Double) -> Double
         var firstOperand: Double    // 구조체에서 자동 생성되는 초기화 함수는 구조체 안의 모든 변수를 입력인자로 갖게 됨
         
+    }
+    // typealias: 타입을 만들 수 있게 해주는 swift 기능
+    typealias PropertyList = AnyObject
+    
+    func clear() {
+        accumulator = 0.0
+        pending = nil
+        internalProgram.removeAll()
+    }
+    
+    var program: PropertyList {
+        get {
+            return internalProgram as AnyObject
+        }
+        set {
+            clear()
+            if let  arrayOfOps = newValue as? [AnyObject] {
+                for op in arrayOfOps {
+                    if let operand = op as? Double {
+                        setOperand(operand: operand)
+                    } else if let operation = op as? String {
+                        performOperation(symbol: operation)
+                    }
+                }
+            }
+        }
+
     }
     
     var result: Double {
