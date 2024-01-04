@@ -43,8 +43,24 @@ class ViewController: UIViewController {
         }
     }
     
-    // Model이 연산하도록 controller와 model을 연결하는 과정
     
+    var savedProgram: CalculatorBrain.PropertyList?
+    
+    
+    // sender가 필요없는 save, restore
+    @IBAction func save() {
+        savedProgram = brain.program
+    }
+    
+    @IBAction func restore() {
+        if savedProgram != nil {
+            brain.program = savedProgram!
+            displayValue = brain.result
+        }
+    }
+
+    // Model이 연산하도록 controller와 model을 연결하는 과정
+
     // 새 클래스의 객체를 생성할 때마다 인자가 없는 initializer가 하나 자동으로 생성됨, 기본 initializer 같은 것
     private var brain = CalculatorBrain()
     
